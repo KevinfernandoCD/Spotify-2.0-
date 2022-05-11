@@ -1,0 +1,34 @@
+
+import {getToken} from "next-auth/jwt";
+import { NextResponse } from "next/server";
+
+
+export async function middleware(req) {
+
+    /*THE NEXT REQ CONTAINS THE TOKEN BECAUSE OF THE NEXT AUTH LIBRARY*/
+
+    const token = await getToken({req, secret:process.env.JWT_SECRET});
+
+    const {pathname} = req.nextUrl;
+    //IF THE TOKEN IS TRUE OR IF THE URL HAS AUTH AND API IF YOUR A NEW LOGIN
+
+    if(pathname.includes('/api/auth') || token) {
+
+        return NextResponse.next();
+
+    }
+
+  if(!token && pathname !== '/login'){
+
+        return NextResponse.redirect('http://localhost:3000/login');
+
+    }
+
+     if(token && pathname == '/login'){
+
+        return NextResponse.redirect('http://localhost:3000');
+
+    }
+
+}
+
